@@ -5,6 +5,7 @@ import UserContext from "./components/app-context";
 import "./App.css";
 import Home from "./components/home.js";
 import CreateAccount from "./components/createaccount.js";
+import Login from "./components/login.js"
 import Deposit from "./components/deposit.js";
 import Withdraw from "./components/withdraw.js";
 import AllData from "./components/alldata.js";
@@ -24,6 +25,7 @@ export default function App() {
             <Route path="/" exact element={<Home />} />
             <Route path="/index.html" element={<Home />} />
             <Route path="/CreateAccount/" element={<CreateAccount />} />
+            <Route path="/Login/" element={<Login />} />
             <Route path="/deposit/" element={<Deposit />} />
             <Route path="/withdraw/" element={<Withdraw />} />
             <Route path="/alldata/" element={<AllData />} />

@@ -89,12 +89,11 @@ export default function CreateAccount() {
                 />
                 <br />
                 <button
-                  disabled={name || email || password ? false : true}
+                  disabled={!name || !email || !password}
                   type="submit"
                   className="btn btn-light"
                   onClick={() => handleCreate({ users, setUsers })}
                 >
-                  {" "}
                   Create Account
                 </button>
               </>

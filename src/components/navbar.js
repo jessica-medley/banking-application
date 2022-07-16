@@ -26,6 +26,15 @@ export default function NavBar() {
                 className={({ isActive }) =>
                   isActive ? "active nav-link" : "nav-link"
                 }
+                to="/Login/"
+                title="Login to your account here"
+              >
+                Login
+              </NavLink>
+              <NavLink
+                className={({ isActive }) =>
+                  isActive ? "active nav-link" : "nav-link"
+                }
                 to="/deposit/"
                 title="Make a deposit here"
               >
