@@ -15,6 +15,30 @@ app.get('/account/create/:name/:email/:password', (req, res) => {
   });
 });
 
+
+// login to account
+app.get('/account/login/:email/:password', (req, res) => {
+  res.send({
+    email: req.params.email,
+    password: req.params.password,
+  });
+});
+
+
+// deposit
+app.get('/account/deposit/:amount', (req, res) => {
+  res.send({
+    amount: req.params.amount,
+  });
+});
+
+// withdraw
+app.get('/account/withdraw/:amount', (req, res) => {
+  res.send({
+    amount: req.params.amount,
+  });
+});
+
 // login user
 app.get('/account/login/:email/:password', (req, res) => {
   res.send({
