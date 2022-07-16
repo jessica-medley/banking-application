@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
+const dal = require('./dal');
 
 // app.use(express.static('public'));
 app.use(express.static('build'));
@@ -8,51 +9,40 @@ app.use(cors());
 
 // create user account
 app.get('/account/create/:name/:email/:password', (req, res) => {
-  res.send({
-    name: req.params.name,
-    email: req.params.email,
-    password: req.params.password,
+  const { name, email, password } = req.params;
+  dal.create(name, email, password).then((user) => {
+    console.log(user);
+    res.send(user);
   });
 });
-
 
 // login to account
-app.get('/account/login/:email/:password', (req, res) => {
-  res.send({
-    email: req.params.email,
-    password: req.params.password,
-  });
-});
-
+// app.get('/account/login/:email/:password', (req, res) => {
+//   res.send({
+//     email: req.params.email,
+//     password: req.params.password,
+//   });
+// });
 
 // deposit
-app.get('/account/deposit/:amount', (req, res) => {
-  res.send({
-    amount: req.params.amount,
-  });
-});
+// app.get('/account/deposit/:amount', (req, res) => {
+//   res.send({
+//     amount: req.params.amount,
+//   });
+// });
 
 // withdraw
-app.get('/account/withdraw/:amount', (req, res) => {
-  res.send({
-    amount: req.params.amount,
-  });
-});
-
-// login user
-app.get('/account/login/:email/:password', (req, res) => {
-  res.send({
-    email: req.params.email,
-    password: req.params.password,
-  });
-});
+// app.get('/account/withdraw/:amount', (req, res) => {
+//   res.send({
+//     amount: req.params.amount,
+//   });
+// });
 
 // all accounts
 app.get('/account/all', (req, res) => {
-  res.send({
-    name: 'peter',
-    email: 'peter@mit.edu',
-    password: 'secret',
+  dal.all().then((docs) => {
+    console.log(docs);
+    res.send(docs);
   });
 });
 

@@ -1,34 +1,43 @@
-import AppContext from "./app-context";
-import Table from "react-bootstrap/Table";
+import React from 'react';
+import Table from 'react-bootstrap/Table';
 
 export default function AllData() {
+  const [data, setData] = React.useState([]);
+
+  React.useEffect(() => {
+    // fetch all accounts from API
+    fetch('/account/all')
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        setData(data);
+      });
+      // Without setting data as the state to monitor for change, I get an
+      // infinite loop, calling the express server.
+  }, data);
+
   return (
-    <AppContext.Consumer>
-      {({ users }) => {
-        const tableRows = users.map((users, i) => {
-          return (
-            <tr key={`table-row-${i}`}>
-              <td>{users.name}</td>
-              <td>{users.email}</td>
-              <td>{users.password}</td>
-            </tr>
-          );
-        });
-        return (
-          <div>
-            <Table>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Password</th>
-                </tr>
-              </thead>
-              <tbody>{tableRows}</tbody>
-            </Table>
-          </div>
-        );
-      }}
-    </AppContext.Consumer>
+    <div>
+      <Table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Password</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((user, i) => {
+            return (
+              <tr key={`table-row-${i}`}>
+                <td>{user.name}</td>
+                <td>{user.email}</td>
+                <td>{user.password}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </Table>
+    </div>
   );
 }
