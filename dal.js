@@ -29,6 +29,20 @@ function create(name, email, password) {
   });
 }
 
+// update - deposit/withdraw amount
+function update(email, amount) {
+  return new Promise((resolve, reject) => {
+    db.collection('users').findOneAndUpdate(
+      { email: email },
+      { $inc: { balance: amount } },
+      { returnOriginal: false },
+      function (err, documents) {
+        err ? reject(err) : resolve(documents);
+      }
+    );
+  });
+}
+
 // all users
 function all() {
   return new Promise((resolve, reject) => {
@@ -63,7 +77,8 @@ function findUsersByEmail(email) {
 
 module.exports = {
   create,
+  update,
   all,
   findUserByEmail,
-  findUsersByEmail
+  findUsersByEmail,
 };

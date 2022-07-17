@@ -1,6 +1,11 @@
 import React from 'react';
 import Table from 'react-bootstrap/Table';
 
+const formatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+});
+
 export default function AllData() {
   const [data, setData] = React.useState([]);
 
@@ -24,6 +29,7 @@ export default function AllData() {
             <th>Name</th>
             <th>Email</th>
             <th>Password</th>
+            <th>Balance</th>
           </tr>
         </thead>
         <tbody>
@@ -33,6 +39,7 @@ export default function AllData() {
                 <td>{user.name}</td>
                 <td>{user.email}</td>
                 <td>{user.password}</td>
+                <td>{formatter.format(user.balance)}</td>
               </tr>
             );
           })}

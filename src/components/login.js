@@ -1,11 +1,11 @@
-import React from 'react';
+import { useState } from 'react';
 import Card from './card';
 
 export default function Login() {
-  const [show, setShow] = React.useState(true);
-  const [status, setStatus] = React.useState('');
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
+  const [show, setShow] = useState(true);
+  const [status, setStatus] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   function validate(field, label) {
     if (!field) {
