@@ -30,8 +30,8 @@ export default function Deposit() {
     <AppContext.Consumer>
       {({ balance, setBalance }) => (
         <Card
-          txtcolor="black"
           header="Deposit"
+          bgcolor="warning"
           body={
             show ? (
               <>

@@ -24,7 +24,6 @@ export default function CreateAccount() {
     }
   }
   async function handleCreate() {
-    console.log(name, email, password);
     setStatus(''); // clear status before attempting to create
     if (!validate(name, 'name')) return;
     if (!validate(email, 'email')) return;
@@ -52,9 +51,9 @@ export default function CreateAccount() {
   }
   return (
     <Card
-      txtcolor="black"
       header="Create Account"
       status={status}
+      bgcolor="primary"
       body={
         show ? (
           <>

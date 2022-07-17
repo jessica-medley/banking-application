@@ -36,6 +36,7 @@ export default function Withdraw() {
         <Card
           txtcolor="black"
           header="Withdraw"
+          bgcolor="success"
           body={
             show ? (
               <>
