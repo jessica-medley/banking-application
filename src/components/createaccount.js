@@ -10,7 +10,7 @@ export default function CreateAccount() {
 
   function validate(field, label) {
     if (!field) {
-      setStatus(alert('Error: Please enter ' + label));
+      setStatus('Error: Please enter ' + label);
       setTimeout(() => setStatus(''), 3000);
       return false;
     }
@@ -23,21 +23,24 @@ export default function CreateAccount() {
       return false;
     }
   }
-  function handleCreate() {
+  async function handleCreate() {
     console.log(name, email, password);
+    setStatus(''); // clear status before attempting to create
     if (!validate(name, 'name')) return;
     if (!validate(email, 'email')) return;
     if (!validate(password, 'password')) return;
     if (!passwordLength(password)) {
-      alert('Password must be at least 8 characters long');
+      setStatus('Error: Password must be at least 8 characters long');
       return;
     }
     const url = `/account/create/${name}/${email}/${password}`;
-    (async () => {
-      const res = await fetch(url);
-      const data = await res.json();
-      console.log(data);
-    })();
+    const res = await fetch(url);
+    const data = await res.json();
+    console.log(data);
+    if (data.error) {
+      setStatus(data.error);
+      return;
+    }
     setShow(false);
   }
 

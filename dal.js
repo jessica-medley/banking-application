@@ -32,8 +32,7 @@ function create(name, email, password) {
 // all users
 function all() {
   return new Promise((resolve, reject) => {
-    const users = db
-      .collection('users')
+    db.collection('users')
       .find({})
       .toArray((err, docs) => {
         err ? reject(err) : resolve(docs);
@@ -41,7 +40,30 @@ function all() {
   });
 }
 
+// find user by email
+function findUserByEmail(email) {
+  return new Promise((resolve, reject) => {
+    db.collection('users')
+      .findOne({ email: email })
+      .then((doc) => resolve(doc))
+      .catch((err) => reject(err));
+  });
+}
+
+// find users by email
+function findUsersByEmail(email) {
+  return new Promise((resolve, reject) => {
+    db.collection('users')
+      .find({ email: email })
+      .toArray(function (err, docs) {
+        err ? reject(err) : resolve(docs);
+      });
+  });
+}
+
 module.exports = {
   create,
-  all
-}
+  all,
+  findUserByEmail,
+  findUsersByEmail
+};
