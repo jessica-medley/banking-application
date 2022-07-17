@@ -8,6 +8,7 @@ import CreateAccount from "./components/createaccount.js";
 import Login from "./components/login.js"
 import Deposit from "./components/deposit.js";
 import Withdraw from "./components/withdraw.js";
+import Balance from "./components/balance.js"
 import AllData from "./components/alldata.js";
 import NavBar from "./components/navbar";
 
@@ -26,9 +27,10 @@ export default function App() {
             <Route path="/index.html" element={<Home />} />
             <Route path="/CreateAccount/" element={<CreateAccount />} />
             <Route path="/Login/" element={<Login />} />
-            <Route path="/deposit/" element={<Deposit />} />
-            <Route path="/withdraw/" element={<Withdraw />} />
-            <Route path="/alldata/" element={<AllData />} />
+            <Route path="/Deposit/" element={<Deposit />} />
+            <Route path="/Withdraw/" element={<Withdraw />} />
+            <Route path="/Balance/" element={<Balance />} />
+            <Route path="/AllData/" element={<AllData />} />
           </Routes>
         </div>
       </UserContext.Provider>

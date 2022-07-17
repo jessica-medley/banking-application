@@ -59,6 +59,24 @@ app.get('/account/login/:email/:password', async (req, res) => {
   }
 });
 
+// Find user by email 
+app.get('/account/user/:email', async (req, res) => {
+  const { email } = req.params;
+  try {
+    const user = await dal.findUserByEmail(email);
+    if (user) {
+      res.send(user);
+    } else {
+      error(res, 'Error: User not found')
+    }
+  } catch (error) {
+    console.error(error);
+    res.send({
+      error,
+    });
+  }
+});
+
 // deposit
 // app.get('/account/deposit/:amount', (req, res) => {
 //   res.send({d

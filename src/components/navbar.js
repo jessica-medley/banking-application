@@ -35,7 +35,7 @@ export default function NavBar() {
                 className={({ isActive }) =>
                   isActive ? "active nav-link" : "nav-link"
                 }
-                to="/deposit/"
+                to="/Deposit/"
                 title="Make a deposit here"
               >
                 Deposit
@@ -44,7 +44,7 @@ export default function NavBar() {
                 className={({ isActive }) =>
                   isActive ? "active nav-link" : "nav-link"
                 }
-                to="/withdraw/"
+                to="/Withdraw/"
                 title="Make a withdraw here"
               >
                 Withdraw
@@ -53,7 +53,16 @@ export default function NavBar() {
                 className={({ isActive }) =>
                   isActive ? "active nav-link" : "nav-link"
                 }
-                to="/alldata/"
+                to="/Balance/"
+                title="All users input"
+              >
+                Balance
+              </NavLink>
+              <NavLink
+                className={({ isActive }) =>
+                  isActive ? "active nav-link" : "nav-link"
+                }
+                to="/AllData/"
                 title="All users input"
               >
                 All Data
