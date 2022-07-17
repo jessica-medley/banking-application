@@ -79,20 +79,17 @@ app.get('/account/user/:email', async (req, res) => {
 
 // update - deposit/withdraw amount
 app.get('/account/update/:email/:amount', async (req, res) => {
-  // const amount = Number(req.params.amount);
-
-  // dal.update(req.params.email, amount).then((response) => {
-  //   console.log(response);
-  //   res.send(response);
-  // });
   let { email, amount } = req.params;
   try {
     const user = await dal.findUserByEmail(email);
     if (user) {
       amount = parseFloat(amount);
+      if (user.balance + amount < 0) {
+        return error(res, 'Error: Overdrawn!');
+      }
       const resp = await dal.update(email, amount);
       console.log(resp);
-      res.send(resp)
+      res.send(resp);
     } else {
       error(res, 'Error: User not found');
     }
