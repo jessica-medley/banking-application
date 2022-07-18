@@ -4,6 +4,7 @@ const cors = require('cors');
 const dal = require('./dal');
 
 // app.use(express.static('public'));
+app.use(express.json());
 app.use(express.static('build'));
 app.use(cors());
 
@@ -100,20 +101,6 @@ app.get('/account/update/:email/:amount', async (req, res) => {
     });
   }
 });
-
-// deposit
-// app.get('/account/deposit/:amount', (req, res) => {
-//   res.send({d
-//     amount: req.params.amount,
-//   });
-// });
-
-// withdraw
-// app.get('/account/withdraw/:amount', (req, res) => {
-//   res.send({
-//     amount: req.params.amount,
-//   });
-// });
 
 // all accounts
 app.get('/account/all', async (req, res) => {
