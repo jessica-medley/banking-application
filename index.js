@@ -122,6 +122,6 @@ app.get('/account/all', async (req, res) => {
   res.send(docs);
 });
 
-const port = 3000;
+const port = 3001;
 app.listen(port);
 console.log(`Running on port: http://localhost:${port}`);

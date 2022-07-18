@@ -32,15 +32,20 @@ export default function CreateAccount() {
       setStatus('Error: Password must be at least 8 characters long');
       return;
     }
-    const url = `/account/create/${name}/${email}/${password}`;
-    const res = await fetch(url);
-    const data = await res.json();
-    console.log(data);
-    if (data.error) {
-      setStatus(data.error);
-      return;
+    try {
+      const url = `http://localhost:3001/account/create/${name}/${email}/${password}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      console.log(data);
+      if (data.error) {
+        setStatus(data.error);
+        return;
+      }
+      setShow(false);
+    } catch (error) {
+      console.error(error);
+      setStatus('Error');
     }
-    setShow(false);
   }
 
   function clearForm() {

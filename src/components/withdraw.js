@@ -22,15 +22,19 @@ export default function Withdraw() {
     } else if (!email) {
       return setStatus('Error: Please enter ' + email);
     }
-    // make request to back end
-    const url = `/account/update/${email}/${-parsedWithdrawAmount}`;
-    const res = await fetch(url);
-    const data = await res.json();
-    if (data.error) {
-      setStatus(data.error);
-      return;
+    try {
+      const url = `http://localhost:3001/account/update/${email}/${-parsedWithdrawAmount}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      if (data.error) {
+        setStatus(data.error);
+        return;
+      }
+      setShow(false);
+    } catch (error) {
+      console.error(error);
+      setStatus('Error');
     }
-    setShow(false);
   }
   function clearForm() {
     setEmail('');

@@ -24,17 +24,21 @@ export default function Balance() {
   async function handleCheckBalance() {
     setStatus(''); // clear status before attempting to check balance
     if (!validate(email, 'email')) return;
-
-    const url = `/account/user/${email}`;
-    const res = await fetch(url);
-    const data = await res.json();
-    console.log(data);
-    if (data.error) {
-      setStatus(data.error);
-      return;
+    try {
+      const url = `http://localhost:3001/account/user/${email}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      console.log(data);
+      if (data.error) {
+        setStatus(data.error);
+        return;
+      }
+      setBalance(data.balance);
+      setShow(false);
+    } catch (error) {
+      console.error(error);
+      setStatus('Error')
     }
-    setBalance(data.balance);
-    setShow(false);
   }
 
   function clearForm() {

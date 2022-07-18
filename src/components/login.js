@@ -21,15 +21,20 @@ export default function Login() {
     if (!validate(email, 'email')) return;
     if (!validate(password, 'password')) return;
 
-    const url = `/account/login/${email}/${password}`;
-    const res = await fetch(url);
-    const data = await res.json();
-    console.log(data);
-    if (data.error) {
-      setStatus(data.error);
-      return;
+    try {
+      const url = `http://localhost:3001/account/login/${email}/${password}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      console.log(data);
+      if (data.error) {
+        setStatus(data.error);
+        return;
+      }
+      setShow(false);
+    } catch (error) {
+      console.error(error);
+      setStatus('Error');
     }
-    setShow(false);
   }
 
   function clearForm() {

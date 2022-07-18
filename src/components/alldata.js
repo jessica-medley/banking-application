@@ -9,17 +9,24 @@ const formatter = new Intl.NumberFormat('en-US', {
 export default function AllData() {
   const [data, setData] = React.useState([]);
 
+
+  // fetch all accounts from API
+  async function getAllData() {
+    try {
+      const url = `http://localhost:3001/account/all`;
+      const res = await fetch(url);
+      const data = await res.json();
+      setData(data);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   React.useEffect(() => {
-    // fetch all accounts from API
-    fetch('/account/all')
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        setData(data);
-      });
+    getAllData();
       // Without setting data as the state to monitor for change, I get an
       // infinite loop, calling the express server.
-  }, data);
+  }, []);
 
   return (
     <div>
