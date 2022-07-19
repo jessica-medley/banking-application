@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import Card from './card';
+import { getAuthHeaderObj } from '../util';
 
 export default function Deposit() {
   let [depositAmount, setDepositAmount] = useState(0);
   const [show, setShow] = useState(true);
-  const [email, setEmail] = useState('');
   const [status, setStatus] = useState('');
 
   async function handleDeposit() {
@@ -19,13 +19,14 @@ export default function Deposit() {
       return setStatus("Can't deposit a negative amount!");
     } else if (parsedDepositAmount === 0) {
       return setStatus('Please enter an amount to deposit!');
-    } else if (!email) {
-      return setStatus('Error: Please enter ' + email);
     }
     try {
       // make request to back end
-      const url = `http://localhost:3001/account/update/${email}/${parsedDepositAmount}`;
-      const res = await fetch(url);
+      const url = `http://localhost:3001/account/update/${parsedDepositAmount}`;
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: getAuthHeaderObj(),
+      });
       const data = await res.json();
       if (data.error) {
         setStatus(data.error);
@@ -38,7 +39,6 @@ export default function Deposit() {
     }
   }
   function clearForm() {
-    setEmail('');
     setDepositAmount('0.00');
     setShow(true);
   }
@@ -50,17 +50,6 @@ export default function Deposit() {
       body={
         show ? (
           <>
-            Email
-            <br />
-            <input
-              type="input"
-              className="form-control"
-              id="email"
-              placeholder="Enter email"
-              value={email}
-              onChange={(e) => setEmail(e.currentTarget.value)}
-            />
-            <br />
             Deposit Amount
             <br />
             <input

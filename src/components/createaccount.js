@@ -1,5 +1,7 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Card from './card';
+import { setUser } from '../util';
 
 export default function CreateAccount() {
   const [show, setShow] = useState(true);
@@ -7,6 +9,7 @@ export default function CreateAccount() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   function validate(field, label) {
     if (!field) {
@@ -34,13 +37,13 @@ export default function CreateAccount() {
     }
     try {
       const url = `http://localhost:3001/account/create/${name}/${email}/${password}`;
-      const res = await fetch(url);
+      const res = await fetch(url, { method: 'POST' });
       const data = await res.json();
-      console.log(data);
       if (data.error) {
         setStatus(data.error);
         return;
       }
+      setUser(data);
       setShow(false);
     } catch (error) {
       console.error(error);

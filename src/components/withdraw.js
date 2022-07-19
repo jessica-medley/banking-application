@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import Card from './card';
+import { getAuthHeaderObj } from '../util';
 
 export default function Withdraw() {
   let [withdrawAmount, setWithdrawAmount] = useState(0);
   const [show, setShow] = useState(true);
-  const [email, setEmail] = useState('');
   const [status, setStatus] = useState('');
 
   async function handleWithdraw() {
@@ -19,12 +19,13 @@ export default function Withdraw() {
       return setStatus("Can't withdraw a negative amount!");
     } else if (parsedWithdrawAmount === 0) {
       return setStatus('Please enter an amount to withdraw!');
-    } else if (!email) {
-      return setStatus('Error: Please enter ' + email);
     }
     try {
-      const url = `http://localhost:3001/account/update/${email}/${-parsedWithdrawAmount}`;
-      const res = await fetch(url);
+      const url = `http://localhost:3001/account/update/${-parsedWithdrawAmount}`;
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: getAuthHeaderObj(),
+      });
       const data = await res.json();
       if (data.error) {
         setStatus(data.error);
@@ -37,7 +38,6 @@ export default function Withdraw() {
     }
   }
   function clearForm() {
-    setEmail('');
     setWithdrawAmount('0.00');
     setShow(true);
   }
@@ -49,17 +49,6 @@ export default function Withdraw() {
       body={
         show ? (
           <>
-            Email
-            <br />
-            <input
-              type="input"
-              className="form-control"
-              id="email"
-              placeholder="Enter email"
-              value={email}
-              onChange={(e) => setEmail(e.currentTarget.value)}
-            />
-            <br />
             Withdraw Amount
             <br />
             <input
