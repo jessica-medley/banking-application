@@ -37,7 +37,7 @@ module.exports = {
       payload,
       process.env.ACCESS_TOKEN_SECRET,
       {
-        expiresIn: '1m',
+        expiresIn: '10m',
       }
     );
 
@@ -45,7 +45,7 @@ module.exports = {
       payload,
       process.env.REFRESH_TOKEN_SECRET,
       {
-        expiresIn: '2m',
+        expiresIn: '20m',
       }
     );
     return {
