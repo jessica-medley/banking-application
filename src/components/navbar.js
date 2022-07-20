@@ -2,18 +2,24 @@ import { NavLink } from 'react-router-dom';
 import { Navbar, Container, Nav } from 'react-bootstrap';
 import AppContext from './app-context';
 import { useNavigate } from 'react-router-dom';
+import { getUser } from '../util';
 
 export default function NavBar() {
   const navigate = useNavigate();
-  
-  function logout(setClientUser) {
+
+  function logout(setClientUser, setAlertObj) {
+    const { name } = getUser();
     localStorage.removeItem('user');
     setClientUser(undefined);
+    setAlertObj({
+      message: `You've successfully logged out, ${name}. See you next time.`,
+      bannerType: 'success',
+    });
     navigate('/');
   }
   return (
     <AppContext.Consumer>
-      {({ clientUser, setClientUser }) => (
+      {({ clientUser, setClientUser, setAlertObj }) => (
         <Navbar bg="light" expand="lg">
           <Container>
             <Navbar.Brand>
@@ -24,24 +30,28 @@ export default function NavBar() {
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
               <Nav className="ms-auto">
-                <NavLink
-                  className={({ isActive }) =>
-                    isActive ? 'active nav-link' : 'nav-link'
-                  }
-                  to="/CreateAccount/"
-                  title="Create your account here"
-                >
-                  Create Account
-                </NavLink>
-                <NavLink
-                  className={({ isActive }) =>
-                    isActive ? 'active nav-link' : 'nav-link'
-                  }
-                  to="/Login/"
-                  title="Login to your account here"
-                >
-                  Login
-                </NavLink>
+                {!clientUser && (
+                  <NavLink
+                    className={({ isActive }) =>
+                      isActive ? 'active nav-link' : 'nav-link'
+                    }
+                    to="/CreateAccount/"
+                    title="Create your account here"
+                  >
+                    Create Account
+                  </NavLink>
+                )}
+                {!clientUser && (
+                  <NavLink
+                    className={({ isActive }) =>
+                      isActive ? 'active nav-link' : 'nav-link'
+                    }
+                    to="/Login/"
+                    title="Login to your account here"
+                  >
+                    Login
+                  </NavLink>
+                )}
                 {clientUser && (
                   <NavLink
                     className={({ isActive }) =>
@@ -75,7 +85,7 @@ export default function NavBar() {
                     Balance
                   </NavLink>
                 )}
-                {/* {clientUser && (
+                {clientUser && clientUser.email.includes('@bad-bank.com') && (
                   <NavLink
                     className={({ isActive }) =>
                       isActive ? 'active nav-link' : 'nav-link'
@@ -85,12 +95,16 @@ export default function NavBar() {
                   >
                     All Data
                   </NavLink>
-                )} */}
+                )}
               </Nav>
               {clientUser && (
                 <Nav className="ml-auto">
-                  <Nav.Item className="navbar-client-name">Hi, {clientUser.name}!</Nav.Item>
-                  <Nav.Link onClick={() => logout(setClientUser)}>Logout</Nav.Link>
+                  <Nav.Item className="navbar-client-name">
+                    Hi, {clientUser.name}
+                  </Nav.Item>
+                  <Nav.Link onClick={() => logout(setClientUser, setAlertObj)}>
+                    Logout
+                  </Nav.Link>
                 </Nav>
               )}
             </Navbar.Collapse>

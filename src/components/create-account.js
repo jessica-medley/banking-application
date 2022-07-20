@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Card from './card';
 import { setUser, getUser } from '../util';
 import AppContext from './app-context';
@@ -9,6 +10,7 @@ export default function CreateAccount() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   function validate(field, label) {
     if (!field) {
@@ -25,7 +27,7 @@ export default function CreateAccount() {
       return false;
     }
   }
-  async function handleCreate(setClientUser, setAlertMessage) {
+  async function handleCreate(setClientUser, setAlertObj) {
     setStatus(''); // clear status before attempting to create
     if (!validate(name, 'name')) return;
     if (!validate(email, 'email')) return;
@@ -42,9 +44,10 @@ export default function CreateAccount() {
         setStatus(data.error);
         return;
       }
-      setAlertMessage('');
+      setAlertObj(undefined);
       setUser(data);
       setClientUser(getUser());
+      navigate('/');
       setShow(false);
     } catch (error) {
       console.error(error);
@@ -60,62 +63,69 @@ export default function CreateAccount() {
   }
   return (
     <AppContext.Consumer>
-      {({ setClientUser, setAlertMessage }) => (
+      {({ setClientUser, setAlertObj }) => (
         <Card
           header="Create Account"
           status={status}
-          bgcolor="primary"
+          bgcolor="light"
+          txtcolor="black"
           body={
             show ? (
               <>
-                Name
-                <br />
-                <input
-                  type="input"
-                  className="form-control"
-                  id="name"
-                  placeholder="Enter name"
-                  value={name}
-                  onChange={(e) => setName(e.currentTarget.value)}
-                />
-                <br />
-                Email
-                <br />
-                <input
-                  type="input"
-                  className="form-control"
-                  id="email"
-                  placeholder="Enter email"
-                  value={email}
-                  onChange={(e) => setEmail(e.currentTarget.value)}
-                />
-                <br />
-                Password
-                <br />
-                <input
-                  type="password"
-                  className="form-control"
-                  id="password"
-                  placeholder="Enter password"
-                  value={password}
-                  onChange={(e) => setPassword(e.currentTarget.value)}
-                />
-                <br />
-                <button
-                  disabled={!name || !email || !password}
-                  type="submit"
-                  className="btn btn-light"
-                  onClick={() => handleCreate(setClientUser, setAlertMessage)}
+                <form
+                  onSubmit={(e) => {
+                    handleCreate(setClientUser, setAlertObj);
+                    e.preventDefault();
+                  }}
                 >
-                  Create Account
-                </button>
+                  Name
+                  <br />
+                  <input
+                    type="input"
+                    className="form-control"
+                    id="name"
+                    placeholder="Enter name"
+                    value={name}
+                    onChange={(e) => setName(e.currentTarget.value)}
+                  />
+                  <br />
+                  Email
+                  <br />
+                  <input
+                    type="input"
+                    className="form-control"
+                    id="email"
+                    placeholder="Enter email"
+                    value={email}
+                    onChange={(e) => setEmail(e.currentTarget.value)}
+                  />
+                  <br />
+                  Password
+                  <br />
+                  <input
+                    type="password"
+                    className="form-control"
+                    id="password"
+                    placeholder="Enter password"
+                    value={password}
+                    onChange={(e) => setPassword(e.currentTarget.value)}
+                  />
+                  <br />
+                  <button
+                    disabled={!name || !email || !password}
+                    type="submit"
+                    className="btn btn-primary"
+                  >
+                    Create Account
+                  </button>
+                </form>
               </>
             ) : (
               <>
                 <h5>Success</h5>
                 <button
                   type="submit"
-                  className="btn btn-light"
+                  className="btn btn-primary"
                   onClick={clearForm}
                 >
                   Add another account

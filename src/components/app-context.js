@@ -6,8 +6,8 @@ const AppContext = React.createContext({
   setSignedIn: () => {},
   clientUser: undefined,
   setClientUser: () => {},
-  alertMessage: '',
-  setAlertMessage: () => {},
+  alertObj: undefined,
+  setAlertObj: () => {},
 });
 
 export default AppContext;

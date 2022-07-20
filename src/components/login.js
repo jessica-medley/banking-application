@@ -1,5 +1,5 @@
 import { useState } from 'react';
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Card from './card';
 import { setUser, getUser } from '../util';
 import AppContext from './app-context';
@@ -9,7 +9,7 @@ export default function Login() {
   const [status, setStatus] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   function validate(field, label) {
     if (!field) {
@@ -20,7 +20,7 @@ export default function Login() {
     return true;
   }
 
-  async function handleLogin({ setClientUser, setAlertMessage }) {
+  async function handleLogin({ setClientUser, setAlertObj }) {
     setStatus(''); // clear status before attempting to login
     if (!validate(email, 'email')) return;
     if (!validate(password, 'password')) return;
@@ -33,9 +33,14 @@ export default function Login() {
         setStatus(data.error);
         return;
       }
-      setAlertMessage('')
+
       setUser(data);
       setClientUser(getUser());
+      setAlertObj({
+        message: `You successfully logged in, ${getUser().name}!`,
+        bannerType: 'success',
+      });
+      navigate('/');
       setShow(false);
     } catch (error) {
       console.error(error);
@@ -50,51 +55,58 @@ export default function Login() {
   }
   return (
     <AppContext.Consumer>
-      {({ setClientUser, setAlertMessage }) => (
+      {({ setClientUser, setAlertObj }) => (
         <Card
-          bgcolor="secondary"
+          bgcolor="light"
+          txtcolor="black"
           header="Login"
           status={status}
           body={
             show ? (
               <>
-                Email
-                <br />
-                <input
-                  type="input"
-                  className="form-control"
-                  id="email"
-                  placeholder="Enter email"
-                  value={email}
-                  onChange={(e) => setEmail(e.currentTarget.value)}
-                />
-                <br />
-                Password
-                <br />
-                <input
-                  type="password"
-                  className="form-control"
-                  id="password"
-                  placeholder="Enter password"
-                  value={password}
-                  onChange={(e) => setPassword(e.currentTarget.value)}
-                />
-                <br />
-                <button
-                  disabled={!email || !password}
-                  type="submit"
-                  className="btn btn-light"
-                  onClick={() => handleLogin({ setClientUser, setAlertMessage })}
+                <form
+                  onSubmit={(e) => {
+                    handleLogin({ setClientUser, setAlertObj });
+                    e.preventDefault();
+                  }}
                 >
-                  Login
-                </button>
+                  Email
+                  <br />
+                  <input
+                    type="input"
+                    className="form-control"
+                    id="email"
+                    placeholder="Enter email"
+                    value={email}
+                    onChange={(e) => setEmail(e.currentTarget.value)}
+                  />
+                  <br />
+                  Password
+                  <br />
+                  <input
+                    type="password"
+                    className="form-control"
+                    id="password"
+                    placeholder="Enter password"
+                    value={password}
+                    onChange={(e) => setPassword(e.currentTarget.value)}
+                  />
+                  <br />
+                  <button
+                    disabled={!email || !password}
+                    type="submit"
+                    className="btn btn-primary"
+                  >
+                    Login
+                  </button>
+                </form>
               </>
             ) : (
               <>
                 <h5>Success</h5>
                 <button
                   type="submit"
-                  className="btn btn-light"
+                  className="btn btn-primary"
                   onClick={clearForm}
                 >
                   Authenticate again

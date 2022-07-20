@@ -5,20 +5,20 @@ import { getUser, getAuthHeaderObj, handleTokenRefresh } from './util';
 
 import './App.css';
 import Home from './components/home.js';
-import CreateAccount from './components/createaccount.js';
+import CreateAccount from './components/create-account.js';
 import Login from './components/login.js';
 import Deposit from './components/deposit.js';
 import Withdraw from './components/withdraw.js';
-import Balance from './components/balance.js';
-import AllData from './components/alldata.js';
+import BalanceContainer from './components/balance-container.js';
+import AllData from './components/all-data.js';
 import NavBar from './components/navbar';
-import AlertBanner from './components/alertbanner.js';
+import AlertBanner from './components/alert-banner.js';
 
 export default function App() {
   const [signedIn, setSignedIn] = useState(false);
   const [clientUser, setClientUser] = useState(undefined);
-  const [alertMessage, setAlertMessage] = useState('');
-  const value = { signedIn, setSignedIn, clientUser, setClientUser, alertMessage, setAlertMessage };
+  const [alertObj, setAlertObj] = useState('');
+  const value = { signedIn, setSignedIn, clientUser, setClientUser, alertObj, setAlertObj };
 
   async function getAuthedUser(isRegenTokenRefresh = true) {
     try {
@@ -68,7 +68,7 @@ export default function App() {
             <Route path="/Login/" element={<Login />} />
             <Route path="/Deposit/" element={<Deposit />} />
             <Route path="/Withdraw/" element={<Withdraw />} />
-            <Route path="/Balance/" element={<Balance />} />
+            <Route path="/Balance/" element={<BalanceContainer />} />
             <Route path="/AllData/" element={<AllData />} />
           </Routes>
         </div>

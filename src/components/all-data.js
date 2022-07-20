@@ -1,10 +1,6 @@
 import React from 'react';
 import Table from 'react-bootstrap/Table';
-
-const formatter = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-});
+import { formatter } from '../util';
 
 export default function AllData() {
   const [data, setData] = React.useState([]);

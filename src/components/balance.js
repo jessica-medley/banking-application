@@ -1,94 +1,55 @@
-import { useState } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Card from './card';
-import { getAuthHeaderObj, handleTokenRefresh } from '../util';
+import { getAuthHeaderObj, handleTokenRefresh, formatter } from '../util';
 import AppContext from './app-context';
 
-const formatter = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-});
-
-export default function Balance() {
-  const [show, setShow] = useState(true);
-  const [status, setStatus] = useState('');
+export default function Balance({ onSetStatus }) {
   const [balance, setBalance] = useState(0);
   const navigate = useNavigate();
+  const { setAlertObj, setClientUser } = useContext(AppContext);
 
-  async function handleCheckBalance(
-    isRegenTokenRefresh = true,
-    setClientUser,
-    setAlertMessage
-  ) {
-    setStatus(''); // clear status before attempting to check balance
-    try {
-      const url = `http://localhost:3001/account/user`;
-      const res = await fetch(url, {
-        headers: getAuthHeaderObj(),
-      });
-      let data = await res.json();
-      if (data.error && isRegenTokenRefresh) {
-        data = await handleTokenRefresh(data, handleCheckBalance);
-        if (data && data.error && data.code === 1) {
-          // Reauth
-          console.log(data.error);
-          setClientUser(undefined);
-          setAlertMessage('Your session has expired. Please re-login.');
-          navigate('/Login');
-        } else if (data && data.error) {
-          setStatus(data.error);
-        }
-        return;
-      } else if (data.error) {
-        setStatus(data.error);
-        return;
-      }
-      setBalance(data.balance);
-      setShow(false);
-    } catch (error) {
-      console.error(error);
-      setStatus('Error');
-    }
-  }
+  useEffect(() => {
+    setAlertObj(undefined);
+  }, [setAlertObj]);
 
-  function clearForm() {
-    setShow(true);
-  }
-  return (
-    <AppContext.Consumer>
-      {({ setClientUser, setAlertMessage }) => (
-        <Card
-          bgcolor="info"
-          header="Balance"
-          status={status}
-          body={
-            show ? (
-              <>
-                <button
-                  type="submit"
-                  className="btn btn-light"
-                  onClick={() =>
-                    handleCheckBalance(true, setClientUser, setAlertMessage)
-                  }
-                >
-                  Check balance
-                </button>
-              </>
-            ) : (
-              <>
-                <h5>Balance: {formatter.format(balance)}</h5>
-                <button
-                  type="submit"
-                  className="btn btn-light"
-                  onClick={clearForm}
-                >
-                  Check balance again
-                </button>
-              </>
-            )
+  useEffect(() => {
+    async function handleCheckBalance(isRegenTokenRefresh = true) {
+      onSetStatus && onSetStatus('') // clear status before attempting to check balance
+      try {
+        const url = `http://localhost:3001/account/user`;
+        const res = await fetch(url, {
+          headers: getAuthHeaderObj(),
+        });
+        let data = await res.json();
+        if (data.error && isRegenTokenRefresh) {
+          data = await handleTokenRefresh(data, handleCheckBalance);
+          if (data && data.error && data.code === 1) {
+            // Reauth
+            console.log(data.error);
+            setClientUser(undefined);
+            setAlertObj({
+              message: 'Your session has expired. Please re-login.',
+            });
+            navigate('/Login');
+          } else if (data && data.error) {
+             onSetStatus && onSetStatus(data.error)
           }
-        />
-      )}
-    </AppContext.Consumer>
-  );
+          return;
+        } else if (data.error) {
+          onSetStatus && onSetStatus(data.error);
+          return;
+        }
+        setClientUser({
+          ...data,
+        });
+        setBalance(data.balance);
+      } catch (error) {
+        console.error(error);
+        onSetStatus && onSetStatus('Error');
+      }
+    }
+    handleCheckBalance();
+  }, [navigate, setAlertObj, setClientUser, onSetStatus]);
+
+  return <>{formatter.format(balance)}</>;
 }

@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Card from './card';
+import Balance from './balance';
 import { getAuthHeaderObj, handleTokenRefresh } from '../util';
 import AppContext from './app-context';
 
@@ -9,11 +10,16 @@ export default function Deposit() {
   const [show, setShow] = useState(true);
   const [status, setStatus] = useState('');
   const navigate = useNavigate();
+  const { setAlertObj } = useContext(AppContext);
+
+  useEffect(() => {
+    setAlertObj(undefined);
+  }, [setAlertObj]);
 
   async function handleDeposit(
     isRegenTokenRefresh = true,
     setClientUser,
-    setAlertMessage
+    setAlertObj
   ) {
     setStatus(''); // clear status before attempting to deposit
     if (!depositAmount) {
@@ -41,7 +47,9 @@ export default function Deposit() {
           // Reauth
           console.log(data.error);
           setClientUser(undefined);
-          setAlertMessage('Your session has expired. Please re-login.');
+          setAlertObj({
+            message: 'Your session has expired. Please re-login.',
+          });
           navigate('/Login');
         } else if (data && data.error) {
           setStatus(data.error);
@@ -63,34 +71,43 @@ export default function Deposit() {
   }
   return (
     <AppContext.Consumer>
-      {({ setClientUser, setAlertMessage }) => (
+      {({ setClientUser, setAlertObj }) => (
         <Card
           header="Deposit"
-          bgcolor="warning"
+          bgcolor="light"
+          txtcolor="black"
           status={status}
           body={
             show ? (
               <>
-                Deposit Amount
-                <br />
-                <input
-                  type="number"
-                  className="form-control"
-                  id="withdraw"
-                  placeholder="0.00"
-                  onChange={(e) => setDepositAmount(e.currentTarget.value)}
-                />
-                <br />
-                <button
-                  disabled={depositAmount ? false : true}
-                  type="submit"
-                  className="btn btn-light"
-                  onClick={() =>
-                    handleDeposit(true, setClientUser, setAlertMessage)
-                  }
+                <form
+                  onSubmit={(e) => {
+                    handleDeposit(true, setClientUser, setAlertObj);
+                    e.preventDefault();
+                  }}
                 >
-                  Deposit
-                </button>
+                  Balance
+                  <h5>
+                    <Balance />
+                  </h5>
+                  Deposit Amount
+                  <br />
+                  <input
+                    type="number"
+                    className="form-control"
+                    id="withdraw"
+                    placeholder="0.00"
+                    onChange={(e) => setDepositAmount(e.currentTarget.value)}
+                  />
+                  <br />
+                  <button
+                    disabled={depositAmount ? false : true}
+                    type="submit"
+                    className="btn btn-primary"
+                  >
+                    Deposit
+                  </button>
+                </form>
               </>
             ) : (
               <>
@@ -98,7 +115,7 @@ export default function Deposit() {
                 <br />
                 <button
                   type="submit"
-                  className="btn btn-light"
+                  className="btn btn-primary"
                   onClick={clearForm}
                 >
                   Make another deposit

@@ -140,8 +140,9 @@ app.post(
         if (user.balance + amount < 0) {
           return error(res, 'Error: Overdrawn!');
         }
-        const resp = await dal.update(clientEmail, amount);
-        res.send(resp);
+        const updateResp = await dal.update(clientEmail, amount);
+        updateResp.value.balance = user.balance + amount;
+        res.send(updateResp)
       } else {
         error(res, 'Error: User not found');
       }

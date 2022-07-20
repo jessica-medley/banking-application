@@ -1,6 +1,6 @@
 function parseJwt(token) {
   if (!token) {
-    return {}
+    return {};
   }
   const base64Url = token.split('.')[1];
   const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -56,7 +56,7 @@ async function handleTokenRefresh(response, callback) {
           // get stuck in an infinte loop.
           callback(false);
         }
-        return {}
+        return {};
       }
     }
     return response;
@@ -67,4 +67,16 @@ async function handleTokenRefresh(response, callback) {
   }
 }
 
-export { parseJwt, getUser, setUser, getAuthHeaderObj, handleTokenRefresh };
+const formatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+});
+
+export {
+  parseJwt,
+  getUser,
+  setUser,
+  getAuthHeaderObj,
+  handleTokenRefresh,
+  formatter,
+};
