@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Card from './card';
-import { setUser } from '../util';
+import { setUser, getUser } from '../util';
+import AppContext from './app-context';
 
 export default function CreateAccount() {
   const [show, setShow] = useState(true);
@@ -9,7 +9,6 @@ export default function CreateAccount() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate();
 
   function validate(field, label) {
     if (!field) {
@@ -26,7 +25,7 @@ export default function CreateAccount() {
       return false;
     }
   }
-  async function handleCreate() {
+  async function handleCreate(setClientUser, setAlertMessage) {
     setStatus(''); // clear status before attempting to create
     if (!validate(name, 'name')) return;
     if (!validate(email, 'email')) return;
@@ -43,7 +42,9 @@ export default function CreateAccount() {
         setStatus(data.error);
         return;
       }
+      setAlertMessage('');
       setUser(data);
+      setClientUser(getUser());
       setShow(false);
     } catch (error) {
       console.error(error);
@@ -58,64 +59,72 @@ export default function CreateAccount() {
     setShow(true);
   }
   return (
-    <Card
-      header="Create Account"
-      status={status}
-      bgcolor="primary"
-      body={
-        show ? (
-          <>
-            Name
-            <br />
-            <input
-              type="input"
-              className="form-control"
-              id="name"
-              placeholder="Enter name"
-              value={name}
-              onChange={(e) => setName(e.currentTarget.value)}
-            />
-            <br />
-            Email
-            <br />
-            <input
-              type="input"
-              className="form-control"
-              id="email"
-              placeholder="Enter email"
-              value={email}
-              onChange={(e) => setEmail(e.currentTarget.value)}
-            />
-            <br />
-            Password
-            <br />
-            <input
-              type="password"
-              className="form-control"
-              id="password"
-              placeholder="Enter password"
-              value={password}
-              onChange={(e) => setPassword(e.currentTarget.value)}
-            />
-            <br />
-            <button
-              disabled={!name || !email || !password}
-              type="submit"
-              className="btn btn-light"
-              onClick={() => handleCreate()}
-            >
-              Create Account
-            </button>
-          </>
-        ) : (
-          <>
-            <h5>Success</h5>
-            <button type="submit" className="btn btn-light" onClick={clearForm}>
-              Add another account
-            </button>
-          </>
-        )
-      }
-    />
+    <AppContext.Consumer>
+      {({ setClientUser, setAlertMessage }) => (
+        <Card
+          header="Create Account"
+          status={status}
+          bgcolor="primary"
+          body={
+            show ? (
+              <>
+                Name
+                <br />
+                <input
+                  type="input"
+                  className="form-control"
+                  id="name"
+                  placeholder="Enter name"
+                  value={name}
+                  onChange={(e) => setName(e.currentTarget.value)}
+                />
+                <br />
+                Email
+                <br />
+                <input
+                  type="input"
+                  className="form-control"
+                  id="email"
+                  placeholder="Enter email"
+                  value={email}
+                  onChange={(e) => setEmail(e.currentTarget.value)}
+                />
+                <br />
+                Password
+                <br />
+                <input
+                  type="password"
+                  className="form-control"
+                  id="password"
+                  placeholder="Enter password"
+                  value={password}
+                  onChange={(e) => setPassword(e.currentTarget.value)}
+                />
+                <br />
+                <button
+                  disabled={!name || !email || !password}
+                  type="submit"
+                  className="btn btn-light"
+                  onClick={() => handleCreate(setClientUser, setAlertMessage)}
+                >
+                  Create Account
+                </button>
+              </>
+            ) : (
+              <>
+                <h5>Success</h5>
+                <button
+                  type="submit"
+                  className="btn btn-light"
+                  onClick={clearForm}
+                >
+                  Add another account
+                </button>
+              </>
+            )
+          }
+        />
+      )}
+    </AppContext.Consumer>
   );
 }

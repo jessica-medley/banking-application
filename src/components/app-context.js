@@ -2,10 +2,12 @@ import React from "react";
 
 // set the defaults
 const AppContext = React.createContext({
-  users: [],
-  setUsers: () => {},
-  balance: 100,
-  setBalance: () => {},
+  signedIn: false,
+  setSignedIn: () => {},
+  clientUser: undefined,
+  setClientUser: () => {},
+  alertMessage: '',
+  setAlertMessage: () => {},
 });
 
 export default AppContext;

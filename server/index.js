@@ -3,7 +3,6 @@ const app = express();
 const cors = require('cors');
 const dotenv = require('dotenv');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const dal = require('./dal');
 const {
   generateTokens,
@@ -11,6 +10,12 @@ const {
   error,
   checkAccessTokenMiddleware,
 } = require('./util');
+
+/**
+ * Error codes
+ * 0 - Invalid/missing access token, call /token with refreshToken
+ * 1 - Invalid/missing refresh token, reauthenticate.
+ */
 
 dotenv.config();
 
@@ -28,9 +33,7 @@ app.post('/account/create/:name/:email/:password', async (req, res) => {
       error(res, 'Error: User already exist');
     } else {
       const salt = await bcrypt.genSalt(10);
-      console.log('salt:', salt);
       const hashedPassword = await bcrypt.hash(password, salt);
-      console.log('hashed password:', hashedPassword);
 
       // Add new user to database.
       const user = await dal.create(name, email, hashedPassword);
@@ -72,49 +75,55 @@ app.post('/account/login/:email/:password', async (req, res) => {
 
 // Create new access token from refresh token
 app.post('/token', async (req, res) => {
-  const refreshToken = req.header('x-auth-token');
-  if (!refreshToken) {
-    res.send({
-      error: 'Error: Token not found',
-    });
-  }
-
   try {
-    const user = await verifyToken(
-      refreshToken,
-      process.env.REFRESH_TOKEN_SECRET
-    );
-    const { accessToken, refreshToken } = await generateTokens(user);
-    res.send({ accessToken, refreshToken });
+    const refreshToken = req.header('x-auth-token');
+    if (!refreshToken) {
+      res.send({
+        error: 'Error: Token not found',
+        code: 1,
+      });
+    } else {
+      const user = await verifyToken(
+        refreshToken,
+        process.env.REFRESH_TOKEN_SECRET
+      );
+      // Delete the properties added by JWT, otherwise
+      // the token doesn't update
+      delete user.iat;
+      delete user.exp;
+      const { accessToken, refreshToken: newRefreshToken } =
+        await generateTokens({
+          ...user,
+        });
+      res.send({ accessToken, refreshToken: newRefreshToken });
+    }
   } catch (error) {
+    console.error(error);
     res.send({
       error: 'Error: Invalid refresh token',
+      code: 1,
     });
   }
 });
 
 // Find user by email
-app.get(
-  '/account/user',
-  checkAccessTokenMiddleware,
-  async (req, res) => {
-    // Added to req by middleware.
-    const { clientUser: { email: clientEmail } = {} } = req;
-    try {
-      const user = await dal.findUserByEmail(clientEmail);
-      if (user) {
-        res.send(user);
-      } else {
-        error(res, 'Error: User not found');
-      }
-    } catch (error) {
-      console.error(error);
-      res.send({
-        error,
-      });
+app.get('/account/user', checkAccessTokenMiddleware, async (req, res) => {
+  // Added to req by middleware.
+  const { clientUser: { email: clientEmail } = {} } = req;
+  try {
+    const user = await dal.findUserByEmail(clientEmail);
+    if (user) {
+      res.send(user);
+    } else {
+      error(res, 'Error: User not found');
     }
+  } catch (error) {
+    console.error(error);
+    res.send({
+      error,
+    });
   }
-);
+});
 
 // update - deposit/withdraw amount
 app.post(
@@ -132,7 +141,6 @@ app.post(
           return error(res, 'Error: Overdrawn!');
         }
         const resp = await dal.update(clientEmail, amount);
-        console.log(resp);
         res.send(resp);
       } else {
         error(res, 'Error: User not found');

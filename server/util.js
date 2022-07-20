@@ -4,23 +4,27 @@ dotenv.config();
 
 module.exports = {
   async checkAccessTokenMiddleware(req, res, next) {
-    const token = req.header('x-auth-token');
-    if (!token) {
-      res.send({
-        error: 'Error: token not found',
-      });
-    }
     try {
-      const clientUser = await jwt.verify(
-        token,
-        process.env.ACCESS_TOKEN_SECRET
-      );
-      req.clientUser = clientUser;
-      next();
+      const token = req.header('x-auth-token');
+      if (!token) {
+        res.send({
+          error: 'Error: Token not found',
+          code: 0,
+        });
+        res.end()
+      } else {
+        const clientUser = await jwt.verify(
+          token,
+          process.env.ACCESS_TOKEN_SECRET
+        );
+        req.clientUser = clientUser;
+        next();
+      }
     } catch (error) {
       console.error(error);
       res.send({
         error: 'Error: Invalid token',
+        code: 0,
       });
     }
   },
@@ -33,7 +37,7 @@ module.exports = {
       payload,
       process.env.ACCESS_TOKEN_SECRET,
       {
-        expiresIn: '5m',
+        expiresIn: '1m',
       }
     );
 
@@ -41,7 +45,7 @@ module.exports = {
       payload,
       process.env.REFRESH_TOKEN_SECRET,
       {
-        expiresIn: '10m',
+        expiresIn: '2m',
       }
     );
     return {

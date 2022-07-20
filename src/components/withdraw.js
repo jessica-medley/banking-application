@@ -1,13 +1,20 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Card from './card';
-import { getAuthHeaderObj } from '../util';
+import { getAuthHeaderObj, handleTokenRefresh } from '../util';
+import AppContext from './app-context';
 
 export default function Withdraw() {
   let [withdrawAmount, setWithdrawAmount] = useState(0);
   const [show, setShow] = useState(true);
   const [status, setStatus] = useState('');
+  const navigate = useNavigate();
 
-  async function handleWithdraw() {
+  async function handleWithdraw(
+    isRegenTokenRefresh = true,
+    setClientUser,
+    setAlertMessage
+  ) {
     setStatus(''); // clear status before attempting to withdraw
     if (!withdrawAmount) {
       withdrawAmount = 0;
@@ -26,8 +33,20 @@ export default function Withdraw() {
         method: 'POST',
         headers: getAuthHeaderObj(),
       });
-      const data = await res.json();
-      if (data.error) {
+      let data = await res.json();
+      if (data.error && isRegenTokenRefresh) {
+        data = await handleTokenRefresh(data, handleWithdraw);
+        if (data && data.error && data.code === 1) {
+          // Reauth
+          console.log(data.error);
+          setClientUser(undefined);
+          setAlertMessage('Your session has expired. Please re-login.');
+          navigate('/Login');
+        } else if (data && data.error) {
+          setStatus(data.error);
+        }
+        return
+      } else if (data.error) {
         setStatus(data.error);
         return;
       }
@@ -42,42 +61,52 @@ export default function Withdraw() {
     setShow(true);
   }
   return (
-    <Card
-      header="Withdraw"
-      bgcolor="success"
-      status={status}
-      body={
-        show ? (
-          <>
-            Withdraw Amount
-            <br />
-            <input
-              type="number"
-              className="form-control"
-              id="withdraw"
-              placeholder="0.00"
-              onChange={(e) => setWithdrawAmount(e.currentTarget.value)}
-            />
-            <br />
-            <button
-              disabled={withdrawAmount ? false : true}
-              type="submit"
-              className="btn btn-light"
-              onClick={() => handleWithdraw()}
-            >
-              Withdraw
-            </button>
-          </>
-        ) : (
-          <>
-            <h5>Withdraw Successful</h5>
-            <br />
-            <button type="submit" className="btn btn-light" onClick={clearForm}>
-              Make another withdrawal
-            </button>
-          </>
-        )
-      }
-    />
+    <AppContext.Consumer>
+      {({ setClientUser, setAlertMessage }) => (
+        <Card
+          header="Withdraw"
+          bgcolor="success"
+          status={status}
+          body={
+            show ? (
+              <>
+                Withdraw Amount
+                <br />
+                <input
+                  type="number"
+                  className="form-control"
+                  id="withdraw"
+                  placeholder="0.00"
+                  onChange={(e) => setWithdrawAmount(e.currentTarget.value)}
+                />
+                <br />
+                <button
+                  disabled={withdrawAmount ? false : true}
+                  type="submit"
+                  className="btn btn-light"
+                  onClick={() =>
+                    handleWithdraw(true, setClientUser, setAlertMessage)
+                  }
+                >
+                  Withdraw
+                </button>
+              </>
+            ) : (
+              <>
+                <h5>Withdraw Successful</h5>
+                <br />
+                <button
+                  type="submit"
+                  className="btn btn-light"
+                  onClick={clearForm}
+                >
+                  Make another withdrawal
+                </button>
+              </>
+            )
+          }
+        />
+      )}
+    </AppContext.Consumer>
   );
 }

@@ -21,7 +21,7 @@ function create(name, email, password) {
       name,
       email,
       password,
-      balance: 0,
+      balance: 100,
     };
     collection.insertOne(doc, { w: 1 }, (err, result) => {
       err ? reject(err) : resolve(doc);

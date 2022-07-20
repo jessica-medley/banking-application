@@ -7,6 +7,15 @@
   pointer-events: none;
 }
 
+.alert {
+  margin-bottom: 0;
+  text-align: center;
+}
+
+.navbar-client-name {
+  padding: .5rem;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
