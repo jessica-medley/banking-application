@@ -16,7 +16,7 @@ export default function Balance({ onSetStatus }) {
     async function handleCheckBalance(isRegenTokenRefresh = true) {
       onSetStatus && onSetStatus(''); // clear status before attempting to check balance
       try {
-        const url = `${process.env.REACT_APP_WEB_SERVER_PROTOCOL}://localhost:${process.env.REACT_APP_WEB_SERVER_PORT}/account/user`;
+        const url = `/account/user`;
         const res = await fetch(url, {
           headers: getAuthHeaderObj(),
         });

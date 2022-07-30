@@ -37,7 +37,7 @@ export default function CreateAccount() {
       return;
     }
     try {
-      const url = `${process.env.REACT_APP_WEB_SERVER_PROTOCOL}://localhost:${process.env.REACT_APP_WEB_SERVER_PORT}/account/create/${name}/${email}/${password}`;
+      const url = `/account/create/${name}/${email}/${password}`;
       const res = await fetch(url, { method: 'POST' });
       const data = await res.json();
       if (data.error) {

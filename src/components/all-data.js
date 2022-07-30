@@ -8,7 +8,7 @@ export default function AllData() {
   // fetch all accounts from API
   async function getAllData() {
     try {
-      const url = `${process.env.REACT_APP_WEB_SERVER_PROTOCOL}://localhost:${process.env.REACT_APP_WEB_SERVER_PORT}/account/all`;
+      const url = `/account/all`;
       const res = await fetch(url);
       const data = await res.json();
       setData(data);

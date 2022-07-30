@@ -29,7 +29,7 @@ export default function App() {
 
   async function getAuthedUser(isRegenTokenRefresh = true) {
     try {
-      const url = `${process.env.REACT_APP_WEB_SERVER_PROTOCOL}://localhost:${process.env.REACT_APP_WEB_SERVER_PORT}/account/user`;
+      const url = `/account/user`;
       const res = await fetch(url, {
         headers: getAuthHeaderObj(),
       });
