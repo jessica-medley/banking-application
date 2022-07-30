@@ -14,9 +14,9 @@ export default function Balance({ onSetStatus }) {
 
   useEffect(() => {
     async function handleCheckBalance(isRegenTokenRefresh = true) {
-      onSetStatus && onSetStatus('') // clear status before attempting to check balance
+      onSetStatus && onSetStatus(''); // clear status before attempting to check balance
       try {
-        const url = `http://localhost:3001/account/user`;
+        const url = `${process.env.REACT_APP_WEB_SERVER_PROTOCOL}://localhost:${process.env.REACT_APP_WEB_SERVER_PORT}/account/user`;
         const res = await fetch(url, {
           headers: getAuthHeaderObj(),
         });
@@ -32,7 +32,7 @@ export default function Balance({ onSetStatus }) {
             });
             navigate('/Login');
           } else if (data && data.error) {
-             onSetStatus && onSetStatus(data.error)
+            onSetStatus && onSetStatus(data.error);
           }
           return;
         } else if (data.error) {

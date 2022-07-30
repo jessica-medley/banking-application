@@ -5,11 +5,10 @@ import { formatter } from '../util';
 export default function AllData() {
   const [data, setData] = React.useState([]);
 
-
   // fetch all accounts from API
   async function getAllData() {
     try {
-      const url = `http://localhost:3001/account/all`;
+      const url = `${process.env.REACT_APP_WEB_SERVER_PROTOCOL}://localhost:${process.env.REACT_APP_WEB_SERVER_PORT}/account/all`;
       const res = await fetch(url);
       const data = await res.json();
       setData(data);
@@ -20,8 +19,8 @@ export default function AllData() {
 
   React.useEffect(() => {
     getAllData();
-      // Without setting data as the state to monitor for change, I get an
-      // infinite loop, calling the express server.
+    // Without setting data as the state to monitor for change, I get an
+    // infinite loop, calling the express server.
   }, []);
 
   return (

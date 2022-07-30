@@ -34,7 +34,9 @@ export default function Withdraw() {
       return setStatus('Please enter an amount to withdraw!');
     }
     try {
-      const url = `http://localhost:3001/account/update/${-parsedWithdrawAmount}`;
+      const url = `${process.env.REACT_APP_WEB_SERVER_PROTOCOL}://localhost:${
+        process.env.REACT_APP_WEB_SERVER_PORT
+      }/account/update/${-parsedWithdrawAmount}`;
       const res = await fetch(url, {
         method: 'POST',
         headers: getAuthHeaderObj(),

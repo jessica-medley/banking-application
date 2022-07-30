@@ -38,7 +38,7 @@ async function handleTokenRefresh(response, callback) {
   try {
     if (typeof response.code !== 'undefined' && response.code === 0) {
       // Call /token with refreshToken to get new access/refresh tokens
-      const url = `http://localhost:3001/token`;
+      const url = `${process.env.REACT_APP_WEB_SERVER_PROTOCOL}://localhost:${process.env.REACT_APP_WEB_SERVER_PORT}/token`;
       const res = await fetch(url, {
         method: 'POST',
         headers: getAuthHeaderObj(true),

@@ -26,7 +26,7 @@ export default function Login() {
     if (!validate(password, 'password')) return;
 
     try {
-      const url = `http://localhost:3001/account/login/${email}/${password}`;
+      const url = `${process.env.REACT_APP_WEB_SERVER_PROTOCOL}://localhost:${process.env.REACT_APP_WEB_SERVER_PORT}/account/login/${email}/${password}`;
       const res = await fetch(url, { method: 'POST' });
       const data = await res.json();
       if (data.error) {

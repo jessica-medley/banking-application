@@ -35,7 +35,7 @@ export default function Deposit() {
     }
     try {
       // make request to back end
-      const url = `http://localhost:3001/account/update/${parsedDepositAmount}`;
+      const url = `${process.env.REACT_APP_WEB_SERVER_PROTOCOL}://localhost:${process.env.REACT_APP_WEB_SERVER_PORT}/account/update/${parsedDepositAmount}`;
       const res = await fetch(url, {
         method: 'POST',
         headers: getAuthHeaderObj(),

@@ -162,6 +162,6 @@ app.get('/account/all', async (req, res) => {
   res.send(docs);
 });
 
-const port = 3001;
+const port = process.env.EXPRESS_PORT;
 app.listen(port);
 console.log(`Running on port: http://localhost:${port}`);

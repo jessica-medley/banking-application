@@ -18,11 +18,18 @@ export default function App() {
   const [signedIn, setSignedIn] = useState(false);
   const [clientUser, setClientUser] = useState(undefined);
   const [alertObj, setAlertObj] = useState('');
-  const value = { signedIn, setSignedIn, clientUser, setClientUser, alertObj, setAlertObj };
+  const value = {
+    signedIn,
+    setSignedIn,
+    clientUser,
+    setClientUser,
+    alertObj,
+    setAlertObj,
+  };
 
   async function getAuthedUser(isRegenTokenRefresh = true) {
     try {
-      const url = `http://localhost:3001/account/user`;
+      const url = `${process.env.REACT_APP_WEB_SERVER_PROTOCOL}://localhost:${process.env.REACT_APP_WEB_SERVER_PORT}/account/user`;
       const res = await fetch(url, {
         headers: getAuthHeaderObj(),
       });
